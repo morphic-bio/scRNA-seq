@@ -1,4 +1,5 @@
 # Morphic scRNA-seq 
+![Screenshot](screenshot.png)
 
 ### Organization of counts files
 The files are organized by experiments (A,B,C,D,E,F,G_1,G_2,H,I,J,L_1,L_2)
