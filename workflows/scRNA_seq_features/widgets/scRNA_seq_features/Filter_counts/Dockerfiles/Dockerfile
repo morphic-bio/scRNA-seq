@@ -68,6 +68,6 @@ RUN pip3 install --no-cache-dir numpy==1.24.3 anndata==0.10.3 numba==0.58.1 pand
 COPY filterEmptyCells.R /usr/local/bin/filterEmptyCells.R
 COPY findValidCells.R /usr/local/bin/findValidCells.R
 COPY runFindValidCells.sh /usr/local/bin/runFindValidCells.sh
-COPY read_counts.py .
-COPY combineFilters.py .
+COPY read_counts.py /usr/local/bin/read_counts.py
+COPY combineFilters.py /usr/local/bin/combineFilters.py
 COPY filter.sh /usr/local/bin/filter.sh

@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 import os
 import ast
 import argparse
@@ -137,7 +137,7 @@ def read_solo(directory):
     #create mask to filter out the cells that are not in the filtered matrix
     cell_barcodes = pd.read_csv(os.path.join(counts_directory, 'GeneFull/filtered/barcodes.tsv'), header=None, sep='\t')[0]
     is_cell = adata.obs_names.isin(cell_barcodes)
-    adata.obs['filter'] = is_cell
+    adata.obs['is_cell'] = is_cell
     
     #add layers to the adata object
     spliced_file=os.path.join(counts_directory, 'Velocyto/raw/spliced.mtx')

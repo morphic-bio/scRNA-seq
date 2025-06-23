@@ -6,11 +6,12 @@
 		<node id="3" name="read_counts" position="(-397.0, 256.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWread_counts.OWread_counts" title="Read counts" version=""/>
 		<node id="4" name="10x_format_fa_gtf" position="(-231.0, 81.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OW10x_format_fa_gtf.OW10x_format_fa_gtf" title="10x_format_fa_gtf" version=""/>
 		<node id="5" name="cellbender" position="(-67.0, 258.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWcellbender.OWcellbender" title="Remove ambient noise" version=""/>
-		<node id="6" name="feature_finder" position="(-593.0, 423.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWfeature_finder.OWfeature_finder" title="Assign feature barcodes" version=""/>
+		<node id="6" name="feature_finder" position="(-594.0, 423.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWfeature_finder.OWfeature_finder" title="Assign feature barcodes" version=""/>
 		<node id="7" name="Start" position="(-596.0, 78.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWStart.OWStart" title="Start" version=""/>
 		<node id="8" name="Filter_counts" position="(-236.0, 256.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWFilter_counts.OWFilter_counts" title="Filter_counts" version=""/>
-		<node id="9" name="Gather_scRNA_seq" position="(-408.0, 582.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWGather_scRNA_seq.OWGather_scRNA_seq" title="Gather_files" version=""/>
-		<node id="10" name="Gather_features" position="(-588.0, 585.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWGather_features.OWGather_features" title="Gather features" version=""/>
+		<node id="9" name="Gather_scRNA_seq" position="(-396.0, 582.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWGather_scRNA_seq.OWGather_scRNA_seq" title="Gather_files" version=""/>
+		<node id="10" name="Gather_features" position="(-592.0, 575.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWGather_features.OWGather_features" title="Gather_features" version=""/>
+		<node id="11" name="feature_finder" position="(-401.0, 421.0)" project_name="scRNA-seq-features" qualified_name="scRNA_seq_features.OWfeature_finder.OWfeature_finder" title="Assign expresion features" version=""/>
 	</nodes>
 	<links>
 		<link enabled="true" id="0" sink_channel="trigger" sink_node_id="4" source_channel="directory" source_node_id="0"/>
@@ -47,8 +48,8 @@
 		<link enabled="true" id="31" sink_channel="useSpliceu" sink_node_id="2" source_channel="useSplicei" source_node_id="7"/>
 		<link enabled="true" id="32" sink_channel="outputdir" sink_node_id="2" source_channel="aligneddir" source_node_id="7"/>
 		<link enabled="true" id="33" sink_channel="inputDir" sink_node_id="3" source_channel="outputdir" source_node_id="2"/>
-		<link enabled="true" id="34" sink_channel="alignsDir" sink_node_id="8" source_channel="alignsDir" source_node_id="3"/>
-		<link enabled="true" id="35" sink_channel="trigger" sink_node_id="5" source_channel="tablesDir" source_node_id="8"/>
+		<link enabled="true" id="34" sink_channel="trigger" sink_node_id="5" source_channel="tablesDir" source_node_id="8"/>
+		<link enabled="true" id="35" sink_channel="alignsDir" sink_node_id="8" source_channel="alignsdir" source_node_id="3"/>
 	</links>
 	<annotations>
 		<text font-family="Helvetica" font-size="16" id="0" rect="(-776.0, 58.0, 150.0, 50.0)" type="text/plain">Prepare references</text>
@@ -59,24 +60,23 @@
 	<thumbnail/>
 	<node_properties>
 		<properties format="pickle" node_id="0">gAN9cQAoWAMAAABVUkxxAU5YDwAAAGNvbmNhdGVuYXRlRmlsZXECWAAAAABxA1gSAAAAY29udHJv
-bEFyZWFWaXNpYmxlcQSIWAoAAABkZWNvbXByZXNzcQWIWAkAAABkaXJlY3RvcnlxBlghAAAAL2Rh
-dGEvc2NSTkFzZXFfb3V0cHV0X3Rlc3QvZ2Vub21lcQdYDgAAAGV4cG9ydEdyYXBoaWNzcQiJWBUA
-AABpbnB1dENvbm5lY3Rpb25zU3RvcmVxCX1xCihYCQAAAGRpcmVjdG9yeXELXXEMSwNhWAMAAABV
-UkxxDV1xDksDYVgHAAAAdHJpZ2dlcnEPXXEQSwNhWAQAAABza2lwcRFdcRJLA2FYCAAAAG92ZXJ3
-aXRlcRNdcRRLA2F1WAcAAABpdGVyYXRlcRWIWA8AAABpdGVyYXRlU2V0dGluZ3NxFn1xFyhYDQAA
-AGl0ZXJhYmxlQXR0cnNxGF1xGVgDAAAAVVJMcRphWAgAAABuV29ya2Vyc3EbSwJYBAAAAGRhdGFx
-HGNjb2xsZWN0aW9ucwpPcmRlcmVkRGljdApxHSlScR5YAwAAAFVSTHEffXEgKFgJAAAAZ3JvdXBT
-aXplcSFYAQAAADFxIlgHAAAAdGhyZWFkc3EjaCJYAwAAAHJhbXEkWAEAAAAwcSV1c1gNAAAAaXRl
-cmF0ZWRBdHRyc3EmXXEnaB9hdVgIAAAAbldvcmtlcnNxKEsCWA4AAABvcHRpb25zQ2hlY2tlZHEp
-fXEqKFgKAAAAZGVjb21wcmVzc3EriVgPAAAAY29uY2F0ZW5hdGVGaWxlcSyJWAcAAABzYXZlTG9n
-cS2JdVgJAAAAb3ZlcndyaXRlcS6JWAYAAAByZXBlYXRxL4lYBwAAAHJ1bk1vZGVxMEsCWAsAAABy
-dW5UcmlnZ2Vyc3ExXXEyKFgJAAAAZGlyZWN0b3J5cTNYAwAAAFVSTHE0ZVgTAAAAc2F2ZWRXaWRn
-ZXRHZW9tZXRyeXE1QzIB2dDLAAIAAAAAAAAAAAAYAAAHfwAABBYAAAAAAAAAGAAAB38AAAQWAAAA
-AAAAAAAHgHE2WAQAAABza2lwcTeIWAwAAAB0cmlnZ2VyUmVhZHlxOH1xOShYBwAAAHRyaWdnZXJx
-OoloM4hoNIh1WAYAAAB1c2VHcHVxO4lYDAAAAHVzZVNjaGVkdWxlcnE8iVgLAAAAX192ZXJzaW9u
-X19xPUsBdS4=
+bEFyZWFWaXNpYmxlcQSIWAoAAABkZWNvbXByZXNzcQWIWAkAAABkaXJlY3RvcnlxBmgDWA4AAABl
+eHBvcnRHcmFwaGljc3EHiVgVAAAAaW5wdXRDb25uZWN0aW9uc1N0b3JlcQh9cQkoWAkAAABkaXJl
+Y3RvcnlxCl1xC0sDYVgDAAAAVVJMcQxdcQ1LA2FYBwAAAHRyaWdnZXJxDl1xD0sDYVgEAAAAc2tp
+cHEQXXERSwNhWAgAAABvdmVyd2l0ZXESXXETSwNhdVgHAAAAaXRlcmF0ZXEUiFgPAAAAaXRlcmF0
+ZVNldHRpbmdzcRV9cRYoWA0AAABpdGVyYWJsZUF0dHJzcRddcRhYAwAAAFVSTHEZYVgIAAAAbldv
+cmtlcnNxGksCWAQAAABkYXRhcRtjY29sbGVjdGlvbnMKT3JkZXJlZERpY3QKcRwpUnEdWAMAAABV
+UkxxHn1xHyhYCQAAAGdyb3VwU2l6ZXEgWAEAAAAxcSFYBwAAAHRocmVhZHNxImghWAMAAAByYW1x
+I1gBAAAAMHEkdXNYDQAAAGl0ZXJhdGVkQXR0cnNxJV1xJmgeYXVYCAAAAG5Xb3JrZXJzcSdLAlgO
+AAAAb3B0aW9uc0NoZWNrZWRxKH1xKShYCgAAAGRlY29tcHJlc3NxKolYDwAAAGNvbmNhdGVuYXRl
+RmlsZXEriVgHAAAAc2F2ZUxvZ3EsiXVYCQAAAG92ZXJ3cml0ZXEtiVgGAAAAcmVwZWF0cS6JWAcA
+AABydW5Nb2RlcS9LAlgLAAAAcnVuVHJpZ2dlcnNxMF1xMShYCQAAAGRpcmVjdG9yeXEyWAMAAABV
+UkxxM2VYEwAAAHNhdmVkV2lkZ2V0R2VvbWV0cnlxNEMyAdnQywACAAAAAAAAAAAAGAAAB38AAAQW
+AAAAAAAAABgAAAd/AAAEFgAAAAAAAAAAB4BxNVgEAAAAc2tpcHE2iFgMAAAAdHJpZ2dlclJlYWR5
+cTd9cTgoWAcAAAB0cmlnZ2VycTmJaDKJaDOJdVgGAAAAdXNlR3B1cTqJWAwAAAB1c2VTY2hlZHVs
+ZXJxO4lYCwAAAF9fdmVyc2lvbl9fcTxLAXUu
 </properties>
-		<properties format="literal" node_id="1">{'controlAreaVisible': True, 'exportGraphics': False, 'genomefile': '', 'gtffile': '', 'indicesdir': '/data/scRNAseq_output_test/genome', 'inputConnectionsStore': {'skipIndex': [7], 'genomefile': [2], 'gtffile': [2], 'skip': [3], 'usePiscem': [3], 'useKallisto': [3], 'useSplicei': [3], 'indicesdir': [3], 'overwrite': [3], 'useStar': [3], 'useSpliceu': [3], 'useSalmon': [3], 'Trigger': [3]}, 'iterate': False, 'iterateSettings': {'iterableAttrs': [], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {'genomeChrBinNbits': False, 'genomeSAindexNbases': False, 'genomeSAsparseD': False, 'genomeSuffixLengthMax': False, 'sjdbGTFfile': True, 'sjdbFileChrStartEnd ': False, 'sjdbGTFchrPrefix ': False, 'sjdbGTFfeatureExon': False, 'sjdbGTFtagExonParentTranscript': False, 'sjdbGTFtagExonParentGene': False, 'sjdbOverhang': False, 'sjdbScore': False, 'sjdbInsertSave ': False, 'saveLog': False, 'skipIndex': False}, 'overwrite': False, 'repeat': False, 'runMode': 2, 'runThreadN': 24, 'runTriggers': ['genomefile'], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'skip': True, 'triggerReady': {'Trigger': False, 'genomedir': False, 'sjdbGTFfile': False, 'genomefile': False}, 'useGpu': False, 'useKallisto': True, 'usePiscem': True, 'useSalmon': True, 'useScheduler': False, 'useSplicei': True, 'useSpliceu': True, 'useStar': True, '__version__': 1}</properties>
+		<properties format="literal" node_id="1">{'controlAreaVisible': True, 'exportGraphics': False, 'genomefile': '', 'gtffile': '', 'indicesdir': '', 'inputConnectionsStore': {'skipIndex': [7], 'genomefile': [2], 'gtffile': [2], 'skip': [3], 'usePiscem': [3], 'useKallisto': [3], 'useSplicei': [3], 'indicesdir': [3], 'overwrite': [3], 'useStar': [3], 'useSpliceu': [3], 'useSalmon': [3], 'Trigger': [3]}, 'iterate': False, 'iterateSettings': {'iterableAttrs': [], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {'genomeChrBinNbits': False, 'genomeSAindexNbases': False, 'genomeSAsparseD': False, 'genomeSuffixLengthMax': False, 'sjdbGTFfile': True, 'sjdbFileChrStartEnd ': False, 'sjdbGTFchrPrefix ': False, 'sjdbGTFfeatureExon': False, 'sjdbGTFtagExonParentTranscript': False, 'sjdbGTFtagExonParentGene': False, 'sjdbOverhang': False, 'sjdbScore': False, 'sjdbInsertSave ': False, 'saveLog': False, 'skipIndex': False}, 'overwrite': None, 'repeat': False, 'runMode': 2, 'runThreadN': 24, 'runTriggers': ['genomefile'], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'skip': True, 'triggerReady': {'Trigger': False, 'genomedir': False, 'sjdbGTFfile': False, 'genomefile': False}, 'useGpu': False, 'useKallisto': True, 'usePiscem': True, 'useSalmon': True, 'useScheduler': False, 'useSplicei': True, 'useSpliceu': True, 'useStar': True, '__version__': 1}</properties>
 		<properties format="pickle" node_id="2">gAN9cQAoWAUAAABDQkxFTnEBSxBYCQAAAFIxcGF0dGVybnECWAQAAABfUjFfcQNYCQAAAFIycGF0
 dGVybnEEWAQAAABfUjJfcQVYBgAAAFVNSUxFTnEGSwxYEQAAAGNvbmNhdGVuYXRlX2ZpbGVzcQeJ
 WBIAAABjb250cm9sQXJlYVZpc2libGVxCIhYDgAAAGV4cG9ydEdyYXBoaWNzcQmJWAwAAABmYXN0
@@ -150,38 +150,48 @@ cbaJWAcAAABhcGVsaXN0cbeJWAcAAABzcGVsaXN0cbiJWBAAAABvdXRwdXRGaWxlUHJlZml4cbmJ
 WA4AAABtdWx0aXBsZVNhbXBsZXG6iVgHAAAAc3RhcmNtZHG7iVgLAAAAa2FsbGlzdG9jbWRxvIlY
 CQAAAHNhbG1vbmNtZHG9iVgJAAAAcGlzY2VtY21kcb6JWA4AAABzdGFyX3doaXRlbGlzdHG/iFgS
 AAAAa2FsbGlzdG9fd2hpdGVsaXN0ccCJWBAAAABhbGV2aW5fd2hpdGVsaXN0ccGJWAoAAABzYW1w
-bGVkaXJzccKJdVgQAAAAb3JnYW5pemVfc2FtcGxlc3HDiVgJAAAAb3V0cHV0ZGlyccRYLwAAAC9k
-YXRhL3Byb2Nlc3NpbmcvbW9ycGhpYy10ZXN0L3Rlc3QvYWxpZ25lZGZpbGVzccVYCQAAAG92ZXJ3
-cml0ZXHGiFgJAAAAcGlzY2VtY21kccdoFlgGAAAAcmVwZWF0cciJWAcAAABydW5Nb2RlcclLAlgL
-AAAAcnVuVHJpZ2dlcnNxyl1xy1gKAAAAaW5kaWNlc2RpcnHMYVgJAAAAc2FsbW9uY21kcc1oFlgK
-AAAAc2FtcGxlZGlyc3HOTlgTAAAAc2F2ZWRXaWRnZXRHZW9tZXRyeXHPQzIB2dDLAAIAAAAAAAAA
-AAAYAAAHfwAABBYAAAAAAAAAGAAAB38AAAQWAAAAAAAAAAAHgHHQWAQAAABza2lwcdGJWAcAAABz
-dGFyY21kcdJoFlgMAAAAdHJpZ2dlclJlYWR5cdN9cdQoWAcAAAB0cmlnZ2VycdWJWAkAAABnZW5v
-bWVEaXJx1olYCwAAAHJlYWRGaWxlc0lucdeJWAsAAABzdGFydmVyc2lvbnHYiVgMAAAAdHJpbV90
-cmlnZ2VycdmJWBAAAABkb3dubG9hZF90cmlnZ2VycdqJWAcAAABUcmlnZ2VycduJaMyJdVgGAAAA
-dXNlR3B1cdyJWAsAAAB1c2VLYWxsaXN0b3HdiFgJAAAAdXNlUGlzY2Vtcd6IWAkAAAB1c2VTYWxt
-b25x34hYDAAAAHVzZVNjaGVkdWxlcnHgiVgKAAAAdXNlU3BsaWNlaXHhiFgKAAAAdXNlU3BsaWNl
-dXHiiFgHAAAAdXNlU3RhcnHjiFgJAAAAd2hpdGVsaXN0ceRYPgAAAC9zdG9yYWdlL3NjUk5Bc2Vx
-X291dHB1dC93aGl0ZWxpc3RzLzEweF92ZXJzaW9uM193aGl0ZWxpc3QudHh0ceVYCwAAAF9fdmVy
-c2lvbl9fceZLAXUu
+bGVkaXJzccKJdVgQAAAAb3JnYW5pemVfc2FtcGxlc3HDiVgJAAAAb3V0cHV0ZGlyccRoFlgJAAAA
+b3ZlcndyaXRlccWIWAkAAABwaXNjZW1jbWRxxmgWWAYAAAByZXBlYXRxx4lYBwAAAHJ1bk1vZGVx
+yEsCWAsAAABydW5UcmlnZ2Vyc3HJXXHKWAoAAABpbmRpY2VzZGlyccthWAkAAABzYWxtb25jbWRx
+zGgWWAoAAABzYW1wbGVkaXJzcc1OWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cc5DMgHZ0MsAAgAA
+AAAAAAAAABgAAAd/AAAEFgAAAAAAAAAYAAAHfwAABBYAAAAAAAAAAAeAcc9YBAAAAHNraXBx0IlY
+BwAAAHN0YXJjbWRx0WgWWAwAAAB0cmlnZ2VyUmVhZHlx0n1x0yhYBwAAAHRyaWdnZXJx1IlYCQAA
+AGdlbm9tZURpcnHViVgLAAAAcmVhZEZpbGVzSW5x1olYCwAAAHN0YXJ2ZXJzaW9ucdeJWAwAAAB0
+cmltX3RyaWdnZXJx2IlYEAAAAGRvd25sb2FkX3RyaWdnZXJx2YlYBwAAAFRyaWdnZXJx2oloy4l1
+WAYAAAB1c2VHcHVx24lYCwAAAHVzZUthbGxpc3RvcdyIWAkAAAB1c2VQaXNjZW1x3YhYCQAAAHVz
+ZVNhbG1vbnHeiFgMAAAAdXNlU2NoZWR1bGVycd+JWAoAAAB1c2VTcGxpY2VpceCIWAoAAAB1c2VT
+cGxpY2V1ceGIWAcAAAB1c2VTdGFyceKIWAkAAAB3aGl0ZWxpc3Rx41g+AAAAL3N0b3JhZ2Uvc2NS
+TkFzZXFfb3V0cHV0L3doaXRlbGlzdHMvMTB4X3ZlcnNpb24zX3doaXRlbGlzdC50eHRx5FgLAAAA
+X192ZXJzaW9uX19x5UsBdS4=
 </properties>
-		<properties format="pickle" node_id="3">gAN9cQAoWAkAAABhbGlnbnNkaXJxAV1xAlgqAAAAL2RhdGEvc3RvcmFnZS9zY1JOQXNlcV9vdXRw
-dXQvQWxpZ25tZW50cy9FcQNhWBIAAABjb250cm9sQXJlYVZpc2libGVxBIhYDgAAAGV4cG9ydEdy
-YXBoaWNzcQWJWA8AAABmaWx0ZXJfZmVhdHVyZXNxBohYFQAAAGlucHV0Q29ubmVjdGlvbnNTdG9y
-ZXEHfXEIWAgAAABpbnB1dERpcnEJXXEKSwZhc1gHAAAAaXRlcmF0ZXELiVgPAAAAaXRlcmF0ZVNl
-dHRpbmdzcQx9cQ0oWA0AAABpdGVyYWJsZUF0dHJzcQ5dcQ9YCQAAAGFsaWduc2RpcnEQYVgIAAAA
-bldvcmtlcnNxEUsDWAQAAABkYXRhcRJjY29sbGVjdGlvbnMKT3JkZXJlZERpY3QKcRMpUnEUWAkA
-AABhbGlnbnNEaXJxFX1xFihYCQAAAGdyb3VwU2l6ZXEXWAEAAAAxcRhYBwAAAHRocmVhZHNxGWgY
-WAMAAAByYW1xGlgBAAAAMHEbdXNYDQAAAGl0ZXJhdGVkQXR0cnNxHF1xHWgVYXVYCAAAAG5UaHJl
-YWRzcR5LAVgIAAAAbldvcmtlcnNxH0sDWA4AAABvcHRpb25zQ2hlY2tlZHEgfXEhKFgJAAAAdGFi
-bGVzRGlycSKJWAkAAABtdHBlcmNlbnRxI4lYCAAAAG5UaHJlYWRzcSSIdVgJAAAAb3ZlcndyaXRl
-cSWJWAYAAAByZXBlYXRxJolYBwAAAHJ1bk1vZGVxJ0sCWAsAAABydW5UcmlnZ2Vyc3EoXXEpWAcA
-AAB0cmlnZ2VycSphWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cStDMgHZ0MsAAgAAAAAAAAAAABgA
-AAd/AAAEFgAAAAAAAAAYAAAHfwAABBYAAAAAAAAAAAeAcSxYBAAAAHNraXBxLYlYDAAAAHRyaWdn
-ZXJSZWFkeXEufXEvKFgJAAAAY291bnRzRGlycTCJaCqJdVgGAAAAdXNlR3B1cTGJWAwAAAB1c2VT
-Y2hlZHVsZXJxMolYCwAAAF9fdmVyc2lvbl9fcTNLAXUu
+		<properties format="pickle" node_id="3">gAN9cQAoWAkAAABhbGlnbnNkaXJxAV1xAihYKgAAAC9kYXRhL3N0b3JhZ2Uvc2NSTkFzZXFfb3V0
+cHV0L0FsaWdubWVudHMvQXEDWCoAAAAvZGF0YS9zdG9yYWdlL3NjUk5Bc2VxX291dHB1dC9BbGln
+bm1lbnRzL0JxBFgqAAAAL2RhdGEvc3RvcmFnZS9zY1JOQXNlcV9vdXRwdXQvQWxpZ25tZW50cy9D
+cQVYKgAAAC9kYXRhL3N0b3JhZ2Uvc2NSTkFzZXFfb3V0cHV0L0FsaWdubWVudHMvRHEGWCoAAAAv
+ZGF0YS9zdG9yYWdlL3NjUk5Bc2VxX291dHB1dC9BbGlnbm1lbnRzL0VxB1gqAAAAL2RhdGEvc3Rv
+cmFnZS9zY1JOQXNlcV9vdXRwdXQvQWxpZ25tZW50cy9GcQhYLAAAAC9kYXRhL3N0b3JhZ2Uvc2NS
+TkFzZXFfb3V0cHV0L0FsaWdubWVudHMvR18xcQlYLAAAAC9kYXRhL3N0b3JhZ2Uvc2NSTkFzZXFf
+b3V0cHV0L0FsaWdubWVudHMvR18ycQpYKgAAAC9kYXRhL3N0b3JhZ2Uvc2NSTkFzZXFfb3V0cHV0
+L0FsaWdubWVudHMvSHELWCoAAAAvZGF0YS9zdG9yYWdlL3NjUk5Bc2VxX291dHB1dC9BbGlnbm1l
+bnRzL0lxDFgqAAAAL2RhdGEvc3RvcmFnZS9zY1JOQXNlcV9vdXRwdXQvQWxpZ25tZW50cy9KcQ1Y
+LAAAAC9kYXRhL3N0b3JhZ2Uvc2NSTkFzZXFfb3V0cHV0L0FsaWdubWVudHMvTF8xcQ5YLAAAAC9k
+YXRhL3N0b3JhZ2Uvc2NSTkFzZXFfb3V0cHV0L0FsaWdubWVudHMvTF8ycQ9lWBIAAABjb250cm9s
+QXJlYVZpc2libGVxEIhYDgAAAGV4cG9ydEdyYXBoaWNzcRGJWA8AAABmaWx0ZXJfZmVhdHVyZXNx
+EohYFQAAAGlucHV0Q29ubmVjdGlvbnNTdG9yZXETfXEUWAgAAABpbnB1dERpcnEVXXEWSwZhc1gH
+AAAAaXRlcmF0ZXEXiVgPAAAAaXRlcmF0ZVNldHRpbmdzcRh9cRkoWA0AAABpdGVyYWJsZUF0dHJz
+cRpdcRtYCQAAAGFsaWduc2RpcnEcYVgIAAAAbldvcmtlcnNxHUsDWAQAAABkYXRhcR5jY29sbGVj
+dGlvbnMKT3JkZXJlZERpY3QKcR8pUnEgWAkAAABhbGlnbnNEaXJxIX1xIihYCQAAAGdyb3VwU2l6
+ZXEjWAEAAAAxcSRYBwAAAHRocmVhZHNxJWgkWAMAAAByYW1xJlgBAAAAMHEndXNYDQAAAGl0ZXJh
+dGVkQXR0cnNxKF1xKWghYXVYCAAAAG5UaHJlYWRzcSpLAVgIAAAAbldvcmtlcnNxK0sDWA4AAABv
+cHRpb25zQ2hlY2tlZHEsfXEtKFgJAAAAdGFibGVzRGlycS6JWAkAAABtdHBlcmNlbnRxL4lYCAAA
+AG5UaHJlYWRzcTCIdVgJAAAAb3ZlcndyaXRlcTGJWAYAAAByZXBlYXRxMolYBwAAAHJ1bk1vZGVx
+M0sCWAsAAABydW5UcmlnZ2Vyc3E0XXE1WAcAAAB0cmlnZ2VycTZhWBMAAABzYXZlZFdpZGdldEdl
+b21ldHJ5cTdDMgHZ0MsAAgAAAAAAAAAAABgAAAd/AAAEFgAAAAAAAAAYAAAHfwAABBYAAAAAAAAA
+AAeAcThYBAAAAHNraXBxOYlYDAAAAHRyaWdnZXJSZWFkeXE6fXE7KFgJAAAAY291bnRzRGlycTyJ
+aDaJdVgGAAAAdXNlR3B1cT2JWAwAAAB1c2VTY2hlZHVsZXJxPolYCwAAAF9fdmVyc2lvbl9fcT9L
+AXUu
 </properties>
-		<properties format="literal" node_id="4">{'controlAreaVisible': True, 'exportGraphics': False, 'inputConnectionsStore': {'inputfa': [3], 'inputgtf': [3], 'outputfa': [3], 'outputgtf': [3], 'trigger': [1], 'skip': [3], 'overwritefiles': [3]}, 'inputfa': '/data/scRNAseq_output_test/genome/Homo_sapiens.GRCh38.dna.primary_assembly.fa', 'inputfeaturefa': '/data/scRNAseq_output/features/all_genes.fasta', 'inputfeaturegtf': '/data/scRNAseq_output/features/all_genes.gtf', 'inputgtf': '/data/scRNAseq_output_test/genome/gencode.v44.primary_assembly.annotation.gtf', 'iterate': False, 'iterateSettings': {'iterableAttrs': [], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {'inputfeaturegtf': True, 'inputfeaturefa': True}, 'outputfa': '/data/scRNAseq_output_test/genome/genome.fa', 'outputgtf': '/data/scRNAseq_output_test/genome/genome.gtf', 'overwritefiles': False, 'repeat': False, 'runMode': 2, 'runTriggers': ['trigger'], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x02\x00\x00\x00\x07\x80', 'skip': True, 'triggerReady': {'trigger': False}, 'useGpu': False, 'useScheduler': False, '__version__': 1}</properties>
+		<properties format="literal" node_id="4">{'controlAreaVisible': True, 'exportGraphics': False, 'inputConnectionsStore': {'inputfa': [3], 'inputgtf': [3], 'outputfa': [3], 'outputgtf': [3], 'trigger': [1], 'skip': [3], 'overwritefiles': [3]}, 'inputfa': '', 'inputfeaturefa': '/data/scRNAseq_output/features/all_genes.fasta', 'inputfeaturegtf': '/data/scRNAseq_output/features/all_genes.gtf', 'inputgtf': '', 'iterate': False, 'iterateSettings': {'iterableAttrs': [], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {'inputfeaturegtf': True, 'inputfeaturefa': True}, 'outputfa': '', 'outputgtf': '', 'overwritefiles': None, 'repeat': False, 'runMode': 2, 'runTriggers': ['trigger'], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x02\x00\x00\x00\x07\x80', 'skip': True, 'triggerReady': {'trigger': False}, 'useGpu': False, 'useScheduler': False, '__version__': 1}</properties>
 		<properties format="pickle" node_id="5">gAN9cQAoWBAAAABhZGRpdGlvbmFsX2ZsYWdzcQFYAAAAAHECWAkAAABhbGlnbnNEaXJxA11xBFgO
 AAAAY2JfY291bnRzX2ZpbGVxBVgUAAAAY2VsbGJlbmRlcl9jb3VudHMuaDVxBlgJAAAAY2Jfc3Vi
 ZGlycQdYCgAAAGNlbGxiZW5kZXJxCFgSAAAAY29udHJvbEFyZWFWaXNpYmxlcQmIWAkAAABjcHVf
@@ -228,7 +238,7 @@ cmF0ZVNldHRpbmdzcSh9cSkoWA0AAABpdGVyYWJsZUF0dHJzcSpdcSsoWAoAAABpbXB1dGZpbGVz
 cSxYCQAAAGlucHV0ZGlyc3EtZVgIAAAAbldvcmtlcnNxLksHWAQAAABkYXRhcS9jY29sbGVjdGlv
 bnMKT3JkZXJlZERpY3QKcTApUnExWAoAAABpbXB1dGZpbGVzcTJ9cTMoWAkAAABncm91cFNpemVx
 NFgBAAAANHE1WAcAAAB0aHJlYWRzcTZYAQAAADFxN1gDAAAAcmFtcThYAQAAADBxOXVzWA0AAABp
-dGVyYXRlZEF0dHJzcTpdcTtoMmF1WA0AAABrZWVwX2V4aXN0aW5ncTyJWBIAAABtYXhIYW1taW5n
+dGVyYXRlZEF0dHJzcTpdcTtoMmF1WA0AAABrZWVwX2V4aXN0aW5ncTyIWBIAAABtYXhIYW1taW5n
 RGlzdGFuY2VxPUsFWAoAAABtYXhUaHJlYWRzcT5LIFgQAAAAbWF4aW11bV9taXNtYXRjaHE/SwNY
 DAAAAG1pblBvc3RlcmlvcnFARz/vMzMzMzMzWAoAAABtaW5fY291bnRzcUFLAFgIAAAAbldvcmtl
 cnNxQksHWAoAAABucHJvY2Vzc2VzcUNLBlgOAAAAb3B0aW9uc0NoZWNrZWRxRH1xRShYCgAAAG1p
@@ -241,16 +251,16 @@ CAAAAGFzX25hbWVkcVSJWBIAAAByZXZlcnNlX2NvbXBsZW1lbnRxVYlYDgAAAHBhcmFsbGVsYnlG
 aWxlcVaJWA8AAABjb25zdW1lclRocmVhZHNxV4lYDgAAAGJhcmNvZGVQYXR0ZXJucViIWA4AAABm
 b3J3YXJkUGF0dGVybnFZiFgOAAAAcmV2ZXJzZVBhdHRlcm5xWolYEQAAAGF2ZXJhZ2VSZWFkTGVu
 Z3RocVuIWAwAAABtaW5Qb3N0ZXJpb3JxXIlYDQAAAHNlYXJjaFRocmVhZHNxXYh1WAkAAABvdXRw
-dXRkaXJxXlgpAAAAL2RhdGEvcHJvY2Vzc2luZy9tb3JwaGljLXRlc3QvdGVzdC9jb3VudHNxX1gO
-AAAAcGFyYWxsZWxieUZpbGVxYIlYEAAAAHByb2Nlc3NfaW5fb3JkZXJxYYlYDwAAAHJlYWRCdWZm
-ZXJMaW5lc3FiTQAIWAYAAAByZXBlYXRxY4lYDgAAAHJldmVyc2VQYXR0ZXJucWRYBAAAAF9SM19x
-ZVgSAAAAcmV2ZXJzZV9jb21wbGVtZW50cWaJWAcAAABydW5Nb2RlcWdLAlgLAAAAcnVuVHJpZ2dl
-cnNxaF1xaVgJAAAAb3V0cHV0ZGlycWphWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cWtDMgHZ0MsA
-AgAAAAABCAAAACIAAAZ3AAAD9gAAAQgAAAAiAAAGdwAAA/YAAAAAAAAAAAeAcWxYDQAAAHNlYXJj
-aFRocmVhZHNxbUsCWAQAAABza2lwcW6JWAoAAABzdHJpbmdlbmN5cW9LAVgMAAAAdHJpZ2dlclJl
-YWR5cXB9cXFoaolzWAoAAAB1bWlfbGVuZ3RocXJLDFgGAAAAdXNlR3B1cXOJWAwAAAB1c2VTY2hl
-ZHVsZXJxdIlYCQAAAHdoaXRlbGlzdHF1WDIAAAAvZGF0YS9wcm9jZXNzaW5nL2dlbm9tZS8xMHhf
-dmVyc2lvbjNfd2hpdGVsaXN0LnR4dHF2WAsAAABfX3ZlcnNpb25fX3F3SwF1Lg==
+dXRkaXJxXlgAAAAAcV9YDgAAAHBhcmFsbGVsYnlGaWxlcWCJWBAAAABwcm9jZXNzX2luX29yZGVy
+cWGJWA8AAAByZWFkQnVmZmVyTGluZXNxYk0ACFgGAAAAcmVwZWF0cWOJWA4AAAByZXZlcnNlUGF0
+dGVybnFkWAQAAABfUjNfcWVYEgAAAHJldmVyc2VfY29tcGxlbWVudHFmiVgHAAAAcnVuTW9kZXFn
+SwJYCwAAAHJ1blRyaWdnZXJzcWhdcWlYCQAAAG91dHB1dGRpcnFqYVgTAAAAc2F2ZWRXaWRnZXRH
+ZW9tZXRyeXFrQzIB2dDLAAIAAAAAACcAAABfAAADYAAABDcAAAAnAAAAdwAAA2AAAAQ0AAAAAAAA
+AAAHgHFsWA0AAABzZWFyY2hUaHJlYWRzcW1LAlgEAAAAc2tpcHFuiVgKAAAAc3RyaW5nZW5jeXFv
+SwFYDAAAAHRyaWdnZXJSZWFkeXFwfXFxaGqJc1gKAAAAdW1pX2xlbmd0aHFySwxYBgAAAHVzZUdw
+dXFziVgMAAAAdXNlU2NoZWR1bGVycXSJWAkAAAB3aGl0ZWxpc3RxdVgyAAAAL2RhdGEvcHJvY2Vz
+c2luZy9nZW5vbWUvMTB4X3ZlcnNpb24zX3doaXRlbGlzdC50eHRxdlgLAAAAX192ZXJzaW9uX19x
+d0sBdS4=
 </properties>
 		<properties format="literal" node_id="7">{'aligneddir': '/data/processing/morphic-test/test/alignedfiles', 'alignedfiles': {'root': '/data/processing/morphic-test/test/alignedfiles', 'pattern': '*.bam', 'findFile': True, 'findDir': False, 'value': None}, 'annotation_file': '/data/scRNAseq_output_test/genome/genome.gtf', 'awscredentialsdir': '/data/.aws', 'controlAreaVisible': True, 'countsdir': '/data/processing/morphic-test/test/counts', 'download_dir': '/data/scRNAseq_output_test/genome', 'downloadindexlink': True, 'exportGraphics': False, 'fastqfiles': [], 'genome_dir': '/data/scRNAseq_output_test/genome', 'genome_file': '/data/scRNAseq_output_test/genome/genome.fa', 'genomegtfURLs': None, 'inputConnectionsStore': {}, 'iterate': False, 'iterateSettings': {'iterableAttrs': ['genomegtfURLs', 'fastqfiles', 'alignedfiles'], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {'bypass_star_index': False, 'downloadindexlink': False, 'fastqfiles': True, 'trimmedfastqfiles': False, 'awscredentialsdir': True, 'genomegtfURLs': False}, 'overwrite': False, 'raw_annotation_file': '/data/scRNAseq_output_test/genome/gencode.v44.primary_assembly.annotation.gtf', 'raw_genome_file': '/data/scRNAseq_output_test/genome/Homo_sapiens.GRCh38.dna.primary_assembly.fa', 'repeat': False, 'runMode': 0, 'runTriggers': [], 's3bucket': 'morphic-bio-processing', 's3destdirectory': 'processed/morphic-test/test', 's3downloaddir': '/data/morphic-bio-processing/morphic-test/test', 's3sourcedirectory': 'morphic-test/test', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x01M\x00\x00\x00!\x00\x00\x06q\x00\x00\x03\x18\x00\x00\x01M\x00\x00\x00!\x00\x00\x06q\x00\x00\x03\x18\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'skip_indexing': True, 'transcriptomefile': '/data/scRNAseq_output_test/genome/transcriptome.fa', 'triggerReady': {}, 'useGpu': False, 'useKallisto': True, 'usePiscem': True, 'useSalmon': True, 'useScheduler': False, 'useSplicei': True, 'useSpliceu': True, 'useStar': True, 'work_dir': '/data/scRNAseq_output_test', '__version__': 1}</properties>
 		<properties format="pickle" node_id="8">gAN9cQAoWAkAAABhbGlnbnNEaXJxAU5YEgAAAGNvbnRyb2xBcmVhVmlzaWJsZXECiFgOAAAAZXhw
@@ -259,15 +269,17 @@ aXJxBl1xB0sHYXNYBwAAAGl0ZXJhdGVxCIhYDwAAAGl0ZXJhdGVTZXR0aW5nc3EJfXEKKFgNAAAA
 aXRlcmFibGVBdHRyc3ELXXEMWAkAAABhbGlnbnNEaXJxDWFYBAAAAGRhdGFxDmNjb2xsZWN0aW9u
 cwpPcmRlcmVkRGljdApxDylScRBYCQAAAGFsaWduc0RpcnERfXESKFgJAAAAZ3JvdXBTaXplcRNY
 AQAAADFxFFgHAAAAdGhyZWFkc3EVaBRYAwAAAHJhbXEWWAEAAAAwcRd1c1gNAAAAaXRlcmF0ZWRB
-dHRyc3EYXXEZaBFhWAgAAABuV29ya2Vyc3EaSwR1WAgAAABtYXhnZW5lc3EbTcQJWAgAAABtaW5n
-ZW5lc3EcS8hYCQAAAG10cGVyY2VudHEdSwVYCAAAAG5Xb3JrZXJzcR5LBFgIAAAAbnRocmVhZHNx
-H0sBWA4AAABvcHRpb25zQ2hlY2tlZHEgfXEhWAkAAABvdmVyd3JpdGVxIolYBgAAAHJlcGVhdHEj
-iVgHAAAAcnVuTW9kZXEkSwBYCwAAAHJ1blRyaWdnZXJzcSVdcSZYEwAAAHNhdmVkV2lkZ2V0R2Vv
-bWV0cnlxJ0MyAdnQywACAAAAAAAAAAAAGAAAB38AAAQWAAAAAAAAABgAAAd/AAAEFgAAAAACAAAA
-B4BxKFgEAAAAc2tpcHEpiVgMAAAAdHJpZ2dlclJlYWR5cSp9cStYBgAAAHVzZUdwdXEsiVgMAAAA
-dXNlU2NoZWR1bGVycS2JWAsAAABfX3ZlcnNpb25fX3EuSwF1Lg==
+dHRyc3EYXXEZaBFhWAgAAABuV29ya2Vyc3EaSwN1WAgAAABtYXhnZW5lc3EbTcQJWAgAAABtaW5n
+ZW5lc3EcS8hYCQAAAG10cGVyY2VudHEdSwVYCAAAAG5Xb3JrZXJzcR5LA1gFAAAAbl9tYWRxH0sD
+WAgAAABudGhyZWFkc3EgSwFYDgAAAG9wdGlvbnNDaGVja2VkcSF9cSIoWAgAAABtaW5nZW5lc3Ej
+iVgIAAAAbWF4Z2VuZXNxJIl1WAkAAABvdmVyd3JpdGVxJYhYBgAAAHJlcGVhdHEmiVgHAAAAcnVu
+TW9kZXEnSwBYCwAAAHJ1blRyaWdnZXJzcShdcSlYEwAAAHNhdmVkV2lkZ2V0R2VvbWV0cnlxKkMy
+AdnQywACAAAAAAAAAAAAGAAAB38AAAQWAAAAAAAAABgAAAd/AAAEFgAAAAACAAAAB4BxK1gEAAAA
+c2tpcHEsiVgMAAAAdHJpZ2dlclJlYWR5cS19cS5YBgAAAHVzZUdwdXEviVgMAAAAdXNlU2NoZWR1
+bGVycTCJWAsAAABfX3ZlcnNpb25fX3ExSwF1Lg==
 </properties>
 		<properties format="literal" node_id="9">{'aligns_dirs': [], 'aligns_patterns': [], 'controlAreaVisible': True, 'counts_dir': ['/data/storage/scRNAseq_output/Alignments/A', '/data/storage/scRNAseq_output/Alignments/B', '/data/storage/scRNAseq_output/Alignments/C', '/data/storage/scRNAseq_output/Alignments/D', '/data/storage/scRNAseq_output/Alignments/E', '/data/storage/scRNAseq_output/Alignments/F', '/data/storage/scRNAseq_output/Alignments/G_1', '/data/storage/scRNAseq_output/Alignments/G_2', '/data/storage/scRNAseq_output/Alignments/H', '/data/storage/scRNAseq_output/Alignments/I', '/data/storage/scRNAseq_output/Alignments/J', '/data/storage/scRNAseq_output/Alignments/L_1', '/data/storage/scRNAseq_output/Alignments/L_2'], 'counts_patterns': [], 'exportGraphics': False, 'features_dirs': [], 'features_patterns': '', 'inputConnectionsStore': {}, 'iterate': False, 'iterateSettings': {'iterableAttrs': ['counts_dir', 'counts_patterns', 'features_dirs', 'aligns_dirs', 'aligns_patterns'], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {'features_dir': False, 'aligns_dir': False, 'counts_patterns': True, 'features_dirs': False, 'aligns_dirs': False, 'aligns_patterns': False, 'features_patterns': False}, 'output_dir': '/data/storage/outputs', 'repeat': False, 'runMode': 0, 'runTriggers': [], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03\x13\x00\x00\x00\xf7\x00\x00\x06\x88\x00\x00\x03\x87\x00\x00\x03\x13\x00\x00\x00\xf7\x00\x00\x06\x88\x00\x00\x03\x87\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'triggerReady': {}, 'useGpu': False, 'useScheduler': False, '__version__': 1}</properties>
-		<properties format="literal" node_id="10">{'controlAreaVisible': True, 'exportGraphics': False, 'expression_dirs': ['/data/storage/scRNAseq_output/Alignments/A'], 'features_dirs': ['/data/processing/morphic-test/test/counts/A'], 'inputConnectionsStore': {}, 'iterate': False, 'iterateSettings': {'iterableAttrs': ['features_dirs', 'expression_dirs'], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {}, 'repeat': False, 'runMode': 0, 'runTriggers': [], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x02\x00\x00\x00\x07\x80', 'triggerReady': {}, 'useGpu': False, 'useScheduler': False, '__version__': 1}</properties>
+		<properties format="literal" node_id="10">{'aligndir': '/data/storage/scRNAseq_output/Alignments', 'cb_final_layer': 'denoised', 'cb_original_layer': 'denoised', 'cellbender_file': 'cellbender/final_counts.h5ad', 'controlAreaVisible': True, 'exportGraphics': False, 'feature_assignment': [], 'features_dirs': ['/data/processing/morphic-test/test/counts/A'], 'features_gex_dirs': '/storage/gex', 'inputConnectionsStore': {}, 'input_counts_name': 'unfiltered_counts.h5ad', 'iterate': False, 'iterateSettings': {'iterableAttrs': ['features_dirs', 'feature_assignment'], 'nWorkers': 1}, 'nWorkers': 1, 'optionsChecked': {'features_align_dirs': False, 'features_gex_dirs': True, 'cellbender_file': True, 'cb_original_layer': True, 'cb_final_layer': True, 'input_counts_name': True, 'output_features_name': True, 'output_counts_name': True, 'feature_assignment': False}, 'output_counts_name': 'merged_counts.h5ad', 'output_features_name': 'merged_features.h5ad', 'repeat': False, 'runMode': 0, 'runTriggers': [], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x00\x00\x00\x18\x00\x00\x07\x7f\x00\x00\x04\x16\x00\x00\x00\x00\x02\x00\x00\x00\x07\x80', 'triggerReady': {}, 'useGpu': False, 'useScheduler': False, '__version__': 1}</properties>
+		<properties format="literal" node_id="11">{'as_named': False, 'averageReadLength': 250, 'barcodePattern': '_R1_', 'barcode_constant_offset': 0, 'barcode_length': 16, 'barcode_n': 1, 'consumerThreads': 0, 'controlAreaVisible': True, 'debugmode': False, 'exportGraphics': False, 'feature_constant_offset': 26, 'feature_n': 3, 'features_file': '/data/project_14361_feature_ref_v2_202405_alt.csv', 'forwardPattern': '_R2_', 'imputfiles': [], 'inputConnectionsStore': {}, 'inputdirs': ['/storage/pooled_scRNA_seq_202401/A', '/storage/pooled_scRNA_seq_202401/B', '/storage/pooled_scRNA_seq_202401/C', '/storage/pooled_scRNA_seq_202401/D', '/storage/pooled_scRNA_seq_202401/E', '/storage/pooled_scRNA_seq_202401/F', '/storage/pooled_scRNA_seq_202401/G_1', '/storage/pooled_scRNA_seq_202401/G_2', '/storage/pooled_scRNA_seq_202401/H', '/storage/pooled_scRNA_seq_202401/I', '/storage/pooled_scRNA_seq_202401/J', '/storage/pooled_scRNA_seq_202401/L_1', '/storage/pooled_scRNA_seq_202401/L_2'], 'iterate': False, 'iterateSettings': {'iterableAttrs': ['imputfiles', 'inputdirs']}, 'keep_existing': True, 'maxHammingDistance': 5, 'maxThreads': 32, 'maximum_mismatch': 3, 'minPosterior': 0.975, 'min_counts': 0, 'nWorkers': 1, 'nprocesses': 6, 'optionsChecked': {'imputfiles': False, 'inputdirs': True, 'stringency': True, 'min_counts': True, 'feature_constant_offset': True, 'nprocesses': True, 'searchThreads': True, 'consumerThreads': False, 'maxThreads': True, 'parallelbyFile': False, 'debugmode': False, 'process_in_order': False, 'maximum_mismatch': False, 'barcode_n': False, 'feature_n': False, 'barcode_constant_offset': False, 'readBufferLines': True, 'as_named': False, 'reverse_complement': False, 'barcodePattern': True, 'forwardPattern': True, 'reversePattern': False, 'averageReadLength': True, 'minPosterior': False}, 'outputdir': '/storage/gex', 'parallelbyFile': False, 'process_in_order': False, 'readBufferLines': 2048, 'repeat': False, 'reversePattern': '_R3_', 'reverse_complement': False, 'runMode': 0, 'runTriggers': [], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x01\xfb\x00\x00\x00\x1c\x00\x00\x07j\x00\x00\x04\x0b\x00\x00\x01\xfb\x00\x00\x004\x00\x00\x07j\x00\x00\x04\x08\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'searchThreads': 4, 'skip': False, 'stringency': 1, 'triggerReady': {}, 'umi_length': 12, 'useGpu': False, 'useScheduler': False, 'whitelist': '/data/processing/genome/10x_version3_whitelist.txt', '__version__': 1}</properties>
 	</node_properties>
 </scheme>

@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 import os
 import ast
 import argparse
@@ -49,7 +49,7 @@ def read_cellranger(directory):
     cell_barcodes = adata_filtered.obs_names
     is_cell = adata_raw.obs_names.isin(cell_barcodes)
     # Add the mask to the raw data AnnData object
-    adata_raw.obs['filter'] = is_cell
+    adata_raw.obs['is_cell'] = is_cell
     return adata_raw
 
 

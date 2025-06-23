@@ -20,7 +20,7 @@ class OWread_counts(OWBwBWidget):
     docker_image_name = "biodepot/scrna-matrices"
     docker_image_tag = "latest"
     inputs = [("inputDir",str,"handleInputsinputDir"),("trigger",str,"handleInputstrigger")]
-    outputs = [("alignsDir",str)]
+    outputs = [("alignsdir",str)]
     pset=functools.partial(settings.Setting,schema_only=True)
     runMode=pset(0)
     exportGraphics=pset(False)
@@ -53,6 +53,6 @@ class OWread_counts(OWBwBWidget):
             self.handleInputs("inputFile", value, None, False)
     def handleOutputs(self):
         outputValue=None
-        if hasattr(self,"alignsDir"):
-            outputValue=getattr(self,"alignsDir")
-        self.send("alignsDir", outputValue)
+        if hasattr(self,"alignsdir"):
+            outputValue=getattr(self,"alignsdir")
+        self.send("alignsdir", outputValue)

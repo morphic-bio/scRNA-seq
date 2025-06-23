@@ -20,9 +20,9 @@ filter_counts() {
     #tee both stderr and stdout of the R script to the logfile
     #filterEmptyCells.R $counts_file
     findValidCells.R $counts_file
-    #this is for debugging and testing
-    echo "python3 combineFilters.py --input_file $counts_file --adaptive_filter"
-    eval "python3 combineFilters.py --input_file $counts_file --adaptive_filter"
+    
+    echo "combineFilters.py --input_file $counts_file --adaptive_filter --n_mad $n_mad"
+    eval "combineFilters.py --input_file $counts_file --adaptive_filter --n_mad $n_mad"
 }
 
 run_with_limit() {
@@ -35,6 +35,7 @@ run_with_limit() {
 
 [ -z "$pattern" ] && pattern="counts.h5ad"
 [ -z "$nthreads" ] && nthreads=1
+[ -z "$n_mad" ] && n_mad=3
 parse_string_into_array "$alignsDir" dirs
 counts_files=()
 

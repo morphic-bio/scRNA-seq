@@ -32,9 +32,10 @@ class OWFilter_counts(OWBwBWidget):
     overwrite=pset(False)
     mingenes=pset(200)
     maxgenes=pset(2500)
-    mtpercent=pset(5)
+    mtpercent=pset(5.0)
     nthreads=pset(1)
     skip=pset(False)
+    n_mad=pset(3)
     def __init__(self):
         super().__init__(self.docker_image_name, self.docker_image_tag)
         with open(getJsonName(__file__,"Filter_counts")) as f:
