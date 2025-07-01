@@ -19,7 +19,7 @@ class OWGather_features(OWBwBWidget):
     want_main_area = False
     docker_image_name = "biodepot/gather_features"
     docker_image_tag = "latest"
-    inputs = [("inputFile",str,"handleInputsinputFile"),("Trigger",str,"handleInputsTrigger"),("aligndir",str,"handleInputsaligndir")]
+    inputs = [("inputFile",str,"handleInputsinputFile"),("Trigger",str,"handleInputsTrigger"),("aligndir",str,"handleInputsaligndir"),("Trigger2",str,"handleInputsTrigger2")]
     outputs = [("OutputDir",str)]
     pset=functools.partial(settings.Setting,schema_only=True)
     runMode=pset(0)
@@ -58,6 +58,11 @@ class OWGather_features(OWBwBWidget):
     def handleInputsaligndir(self, value, *args):
         if args and len(args) > 0: 
             self.handleInputs("aligndir", value, args[0][0], test=args[0][3])
+        else:
+            self.handleInputs("inputFile", value, None, False)
+    def handleInputsTrigger2(self, value, *args):
+        if args and len(args) > 0: 
+            self.handleInputs("Trigger2", value, args[0][0], test=args[0][3])
         else:
             self.handleInputs("inputFile", value, None, False)
     def handleOutputs(self):

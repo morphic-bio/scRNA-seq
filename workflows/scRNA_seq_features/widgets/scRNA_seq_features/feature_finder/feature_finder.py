@@ -20,7 +20,7 @@ class OWfeature_finder(OWBwBWidget):
     docker_image_name = "biodepot/process_features"
     docker_image_tag = "latest"
     inputs = [("outputdir",str,"handleInputsoutputdir"),("trigger",str,"handleInputstrigger"),("features_file",str,"handleInputsfeatures_file"),("whitelist",str,"handleInputswhitelist")]
-    outputs = [("alignsDir",str)]
+    outputs = [("outputdir",str)]
     pset=functools.partial(settings.Setting,schema_only=True)
     runMode=pset(0)
     exportGraphics=pset(False)
@@ -90,6 +90,6 @@ class OWfeature_finder(OWBwBWidget):
             self.handleInputs("inputFile", value, None, False)
     def handleOutputs(self):
         outputValue=None
-        if hasattr(self,"alignsDir"):
-            outputValue=getattr(self,"alignsDir")
-        self.send("alignsDir", outputValue)
+        if hasattr(self,"outputdir"):
+            outputValue=getattr(self,"outputdir")
+        self.send("outputdir", outputValue)

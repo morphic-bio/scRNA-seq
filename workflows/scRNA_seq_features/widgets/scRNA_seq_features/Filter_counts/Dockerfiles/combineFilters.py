@@ -8,6 +8,7 @@ import os
 from scipy.sparse import issparse
 from scipy.sparse import csr_matrix
 import scanpy as sc
+import scipy.sparse as sp
 
 def add_filter_to_anndata(adata, barcode_file, filter_column_name, present_value=True):
     """
@@ -379,6 +380,21 @@ def create_qc_plot(adata, directory, min_genes, max_genes, mt_pct_cutoff, num_si
     
     print(f"Plots saved to: {output_html} and {output_png}")
 
+def ensure_csr_format(adata):
+    """Ensure AnnData X matrix and all layers are in CSR format."""
+    # Fix main matrix
+    if hasattr(adata.X, 'toarray') and not sp.isspmatrix_csr(adata.X):
+        adata.X = adata.X.tocsr()
+    
+    # Fix layers if they exist
+    if hasattr(adata, 'layers'):
+        for layer_name in adata.layers:
+            layer_matrix = adata.layers[layer_name]
+            if hasattr(layer_matrix, 'toarray') and not sp.isspmatrix_csr(layer_matrix):
+                adata.layers[layer_name] = layer_matrix.tocsr()
+    
+    return adata
+
 #parse arguments to get input file
 print("Parsing command line arguments...")
 parser = argparse.ArgumentParser(description='Create a filtered AnnData object')
@@ -497,6 +513,8 @@ print (adata)
 
 output_file = os.path.join(directory, 'unfiltered_counts.h5ad')
 print(f"\nWriting raw AnnData object (with all .obs columns) to {output_file}...")
+# Ensure CSR format before writing to prevent AnnData warnings
+adata = ensure_csr_format(adata)
 adata.write(output_file)
 print(f"Successfully wrote {output_file}")
 
@@ -506,6 +524,8 @@ adata_filtered = adata[adata.obs['singlet_filtered']].copy() # Corrected subsett
 print(f"Filtered AnnData object created with {adata_filtered.n_obs} observations.")
 output_file = os.path.join(directory, 'filtered_counts.h5ad')
 print(f"Writing filtered AnnData object to {output_file}...")
+# Ensure CSR format before writing to prevent AnnData warnings
+adata_filtered = ensure_csr_format(adata_filtered)
 adata_filtered.write(output_file)
 print(f"Successfully wrote {output_file}")
 print(adata_filtered)

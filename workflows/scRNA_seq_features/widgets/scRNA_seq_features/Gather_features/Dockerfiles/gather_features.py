@@ -459,6 +459,10 @@ for features_dir in features_dir:
     methods = [d for d in os.listdir(alignments_sample_dir) if os.path.isdir(os.path.join(alignments_sample_dir, d))]
     for method in methods:
         counts_h5ad = os.path.join(alignments_sample_dir, method, input_counts_h5ad)
+        #check if counts_h5ad exists
+        if not os.path.exists(counts_h5ad):
+            print(f"counts_h5ad not found: {counts_h5ad}")
+            continue
         counts_adata = ad.read_h5ad(counts_h5ad)
         feature_adata, counts_adata = merge_features_with_counts(feature_adata, counts_adata)
         counts_adata=filter_features(feature_adata, counts_adata)
