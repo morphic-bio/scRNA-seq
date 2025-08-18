@@ -194,7 +194,7 @@ def process_discovered_directory(args):
         process_directory(os.path.join(base_dir, sub_dir))
 
 def process_directory(fulldir):
-        fullpath = os.path.join(fulldir, 'counts.h5ad') 
+        fullpath = os.path.join(fulldir, 'unfiltered_counts.h5ad') 
         if os.path.exists(fullpath):
             if os.getenv("overwrite", "false").lower() in ('true', '1', 't'):
                 print(f"Overwriting the existing file {fullpath}")

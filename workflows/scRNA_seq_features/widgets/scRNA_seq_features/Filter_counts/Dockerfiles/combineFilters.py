@@ -405,6 +405,7 @@ parser.add_argument('--mito_genes', type=str, help='File containing mitochondria
 parser.add_argument('--adaptive_filter', action='store_true', help='Use adaptive filtering based on median and MAD')
 #add flag for number of MADs
 parser.add_argument('--n_mad', type=float, default=3, help='Number of MADs to use for adaptive filtering (default: 3)')
+parser.add_argument('--output_barcodes', action='store_true', help='Output a text file with the list of single filtered barcodes')
 
 args = parser.parse_args()
 print(f"Arguments parsed: {args}")
@@ -502,13 +503,6 @@ print(f"Number of single cells: {num_single_cells}")
 print(f"Number of cells that passed the filter: {num_filtered}")
 print(f"Number of single cells that passed the filter: {num_singlet_filtered}")
 
-# Save QC plots if using adaptive filtering
-if args.adaptive_filter:
-    print("\nAdaptive filtering was used, generating simplified quantile-based histogram...")
-    create_qc_plot(adata, directory, min_genes, max_genes, mt_pct_cutoff, num_singlet_filtered, num_single_cells, args.n_mad)
-else:
-    print("\nAdaptive filtering not used, skipping QC plot generation.")
-
 print (adata)   
 
 output_file = os.path.join(directory, 'unfiltered_counts.h5ad')
@@ -529,4 +523,21 @@ adata_filtered = ensure_csr_format(adata_filtered)
 adata_filtered.write(output_file)
 print(f"Successfully wrote {output_file}")
 print(adata_filtered)
+
+# Save the list of filtered barcodes if requested
+if args.output_barcodes:
+    print("\nWriting single filtered barcodes to file...")
+    barcodes_to_write = adata_filtered.obs_names
+    output_barcode_file = os.path.join(directory, 'single_filtered_barcodes.txt')
+    barcodes_to_write.to_frame().to_csv(output_barcode_file, header=False, index=False)
+    print(f"Successfully wrote {len(barcodes_to_write)} barcodes to {output_barcode_file}")
+    
+# Save QC plots if using adaptive filtering
+if args.adaptive_filter:
+    print("\nAdaptive filtering was used, generating simplified quantile-based histogram...")
+    create_qc_plot(adata, directory, min_genes, max_genes, mt_pct_cutoff, num_singlet_filtered, num_single_cells, args.n_mad)
+else:
+    print("\nAdaptive filtering not used, skipping QC plot generation.")
+
+
 print("\n--- Script finished ---")

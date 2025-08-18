@@ -21,6 +21,10 @@ for sample in ${samples[@]}; do
     echo "cp $features_dir/$sample/heatmap.png $MSK_dir/$sample/QC/features"
     cp $features_dir/$sample/heatmap.png $MSK_dir/$sample/QC/features
     echo "cp $features_dir/$sample/feature_sequences.txt $MSK_dir/$sample/QC/features"
+    cp $features_dir/$sample/stats.txt $MSK_dir/$sample/QC/features
+    echo "cp $features_dir/$sample/feature_sequences.txt $MSK_dir/$sample/QC/features"
+    cp $features_dir/$sample/feature_sequences.txt $MSK_dir/$sample/QC/features
+    echo "cp $features_dir/$sample/feature_sequences.txt $MSK_dir/$sample/QC/features"
     cp $features_dir/$sample/feature_sequences.txt $MSK_dir/$sample/QC/features
     echo "cp $ca_assessment_dir/${sample}_star/* $MSK_dir/$sample/QC/cell_assignments"
     cp $ca_assessment_dir/${sample}_star/* $MSK_dir/$sample/QC/cell_assignments

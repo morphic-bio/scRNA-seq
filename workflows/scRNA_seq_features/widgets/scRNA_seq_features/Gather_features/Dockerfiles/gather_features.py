@@ -407,15 +407,15 @@ for key, value in os.environ.items():
 features_dir_str = os.getenv('features_dirs')
 alignments_dir = os.getenv('aligndir')
 features_h5ad= os.getenv('features_h5ad')
-merged_features_h5ad= os.getenv('merged_features_h5ad')
-merged_counts_h5ad= os.getenv('merged_counts_h5ad')
-input_counts_h5ad= os.getenv('input_counts_h5ad')
+merged_features_h5ad= os.getenv('output_features_name')
+merged_counts_h5ad= os.getenv('output_counts_name')
+input_counts_h5ad= os.getenv('input_counts_name')
 features_gex= os.getenv('features_gex_dirs')
 cellbender_file= os.getenv('cellbender_file')
 cb_original_layer= os.getenv('cb_original_layer')
 cb_final_layer= os.getenv('cb_final_layer')
-feature_assignment_str= os.getenv('feature_assignment')
 overwrite = True
+
 #overwrite= os.getenv('overwrite')
 #if features_h5ad is not set set it to features.h5ad
 if not features_h5ad:
@@ -428,7 +428,7 @@ if not merged_counts_h5ad:
     merged_counts_h5ad = 'merged_counts.h5ad'
     print(f"merged_counts_h5ad not set, setting it to {merged_counts_h5ad}")
 if not input_counts_h5ad:
-    input_counts_h5ad = 'unfiltered_counts.h5ad'
+    input_counts_h5ad = 'filtered_counts.h5ad'
     print(f"input_counts_h5ad not set, setting it to {input_counts_h5ad}")
 features_dir = ast.literal_eval(features_dir_str) if features_dir_str else []
 
@@ -439,7 +439,6 @@ for features_dir in features_dir:
     sample = os.path.basename(features_dir)
     print(f"sample: {sample}")
     print(f"features_gex: {features_gex}")
-    
 
     feature_adata = read_larry(features_dir)
     #print the shape of feature_adata

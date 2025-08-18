@@ -20,9 +20,9 @@ filter_counts() {
     #tee both stderr and stdout of the R script to the logfile
     #filterEmptyCells.R $counts_file
     findValidCells.R $counts_file
-    
-    echo "combineFilters.py --input_file $counts_file --adaptive_filter --n_mad $n_mad"
-    eval "combineFilters.py --input_file $counts_file --adaptive_filter --n_mad $n_mad"
+    [ -n "$OUTPUT_SINGLET_FILTERED_BARCODES" ] && output_barcodes="--output_barcodes" || output_barcodes=""
+    echo "combineFilters.py --input_file $counts_file --adaptive_filter $output_barcodes --n_mad $n_mad"
+    eval "combineFilters.py --input_file $counts_file --adaptive_filter $output_barcodes --n_mad $n_mad"
 }
 
 run_with_limit() {
@@ -33,7 +33,7 @@ run_with_limit() {
     done
 }
 
-[ -z "$pattern" ] && pattern="counts.h5ad"
+[ -z "$pattern" ] && pattern="unfiltered_counts.h5ad"
 [ -z "$nthreads" ] && nthreads=1
 [ -z "$n_mad" ] && n_mad=3
 parse_string_into_array "$alignsDir" dirs

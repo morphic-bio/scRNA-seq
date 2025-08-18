@@ -313,7 +313,7 @@ def analyze_data_types(data, name, is_matrix=False):
         # For DataFrame columns
         return infer_semantic_type(data, is_matrix=False)
 
-def summarize_h5ad(file_path, show_samples=True, n_samples=5, analyze_types=True, show_plots=True):
+def summarize_h5ad(file_path, show_samples=True, n_samples=5, analyze_types=True, show_plots=True, summary_only=False):
     """
     Read an AnnData h5ad file and summarize its structure.
 
@@ -329,6 +329,8 @@ def summarize_h5ad(file_path, show_samples=True, n_samples=5, analyze_types=True
         Whether to perform detailed type analysis
     show_plots : bool
         Whether to generate ASCII plots for obs/var annotations
+    summary_only : bool
+        Whether to show only essential summary (dimensions, data type, structure)
 
     Returns:
     --------
@@ -359,17 +361,75 @@ def summarize_h5ad(file_path, show_samples=True, n_samples=5, analyze_types=True
     report.append(f"\nMain Matrix (X): {x_type} of shape {adata.shape}")
     report.append(f"Data type: {x_dtype}")
 
+    # Check for sparsity
+    if hasattr(adata.X, 'data') and hasattr(adata.X, 'indices'):
+        sparsity = 1.0 - (len(adata.X.data) / (adata.shape[0] * adata.shape[1]))
+        report.append(f"Sparsity: {sparsity:.2%}")
+
+    # If summary_only is True, skip to structure and return
+    if summary_only:
+        # ASCII representation of structure
+        report.append("\nStructure:")
+        report.append("AnnData")
+        report.append("├── X: main data matrix")
+
+        if adata.layers:
+            report.append("├── layers")
+            last_layer = list(adata.layers.keys())[-1]
+            for layer in adata.layers.keys():
+                prefix = "│   └──" if layer == last_layer else "│   ├──"
+                report.append(f"{prefix} {layer}")
+
+        report.append("├── obs: cell annotations")
+        if adata.obs.columns.size > 0:
+            for i, col in enumerate(adata.obs.columns):
+                prefix = "│   └──" if i == len(adata.obs.columns) - 1 else "│   ├──"
+                report.append(f"{prefix} {col}")
+
+        report.append("├── var: gene annotations")
+        if adata.var.columns.size > 0:
+            for i, col in enumerate(adata.var.columns):
+                prefix = "│   └──" if i == len(adata.var.columns) - 1 else "│   ├──"
+                report.append(f"{prefix} {col}")
+
+        # Add remaining elements to ASCII tree
+        remaining = []
+        if adata.uns: remaining.append("uns")
+        if adata.obsm: remaining.append("obsm")
+        if adata.varm: remaining.append("varm")
+        if adata.obsp: remaining.append("obsp")
+        if adata.varp: remaining.append("varp")
+
+        for i, elem in enumerate(remaining):
+            is_last = i == len(remaining) - 1
+            prefix = "└──" if is_last else "├──"
+            parent_prefix = "    " if is_last else "│   "
+
+            component_map = {
+                "uns": (adata.uns, "uns: unstructured annotations"),
+                "obsm": (adata.obsm, "obsm: observation matrices"),
+                "varm": (adata.varm, "varm: variable matrices"),
+                "obsp": (adata.obsp, "obsp: observation pairwise matrices"),
+                "varp": (adata.varp, "varp: variable pairwise matrices")
+            }
+
+            component, label = component_map[elem]
+            if component:
+                report.append(f"{prefix} {label}")
+                keys = list(component.keys())
+                for j, key in enumerate(keys):
+                    key_prefix = f"{parent_prefix}└──" if j == len(keys) - 1 else f"{parent_prefix}├──"
+                    report.append(f"{key_prefix} {key}")
+
+        return "\n".join(report)
+
+    # Continue with full analysis if not summary_only
     if analyze_types:
         try:
             x_semantic = infer_semantic_type(adata.X, is_matrix=True)
             report.append(f"Inferred type: {x_semantic}")
         except Exception as e:
             report.append(f"Type inference error: {str(e)[:100]}")
-
-    # Check for sparsity
-    if hasattr(adata.X, 'data') and hasattr(adata.X, 'indices'):
-        sparsity = 1.0 - (len(adata.X.data) / (adata.shape[0] * adata.shape[1]))
-        report.append(f"Sparsity: {sparsity:.2%}")
 
     # Show sample values from main matrix
     if show_samples:
@@ -614,6 +674,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Summarize AnnData h5ad file structure')
     parser.add_argument('file_path', help='Path to the h5ad file')
+    parser.add_argument('--summary', action='store_true',
+                       help='Show only essential summary (dimensions, data type, structure)')
     parser.add_argument('--no-samples', action='store_true', 
                        help='Disable showing sample values')
     parser.add_argument('--no-types', action='store_true',
@@ -629,5 +691,6 @@ if __name__ == "__main__":
                            show_samples=not args.no_samples, 
                            n_samples=args.n_samples,
                            analyze_types=not args.no_types,
-                           show_plots=not args.no_plots)
+                           show_plots=not args.no_plots,
+                           summary_only=args.summary)
     print(summary)

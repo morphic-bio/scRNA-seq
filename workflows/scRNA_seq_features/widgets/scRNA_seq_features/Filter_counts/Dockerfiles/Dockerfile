@@ -63,7 +63,7 @@ RUN R -e "remotes::install_bioc('scDblFinder')"
 #RUN R -e "reticulate::import('anndata')"
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel 
-RUN pip3 install --no-cache-dir numpy==1.24.3 anndata==0.10.3 numba==0.58.1 pandas==2.1.1 rpy2 pyroe scanpy==1.9.6 plotly==5.22.0 kaleido
+RUN pip3 install --no-cache-dir numpy==1.24.3 anndata==0.10.3 numba==0.58.1 pandas==2.1.1 rpy2 pyroe scanpy==1.9.6 plotly==5.22.0 kaleido==0.2.1
 # Copy the R script into the Docker image
 COPY filterEmptyCells.R /usr/local/bin/filterEmptyCells.R
 COPY findValidCells.R /usr/local/bin/findValidCells.R
