@@ -142,17 +142,9 @@ def assign_flex_features(features_dir: str,
     if p_assign is None:
         raise FileNotFoundError("Could not find features.assignments.(tsv|txt|csv) in features_dir")
 
-    # --- read allowed feature list (index -> feature_barcode)
-    idx_to_feature = None
-    if p_allowed is not None:
-        allowed_df = _read_any(p_allowed)
-        allowed_df = allowed_df.iloc[:, :1]
-        allowed_df.columns = ["feature_barcode"]
-        # 1-based indexing in assignments → position in this list + 1
-        idx_to_feature = dict((i+1, feat) for i, feat in enumerate(allowed_df["feature_barcode"].astype(str).tolist()))
-
     # --- read names mapping: feature_barcode -> sample_name
     feature_to_sample = {}
+    idx_to_feature = None
     if p_names is not None:
         names_df = _read_any(p_names)
         if names_df.shape[1] < 2:
@@ -160,6 +152,17 @@ def assign_flex_features(features_dir: str,
         names_df = names_df.iloc[:, :2]
         names_df.columns = ["feature_barcode", "sample_name"]
         feature_to_sample = dict(zip(names_df["feature_barcode"].astype(str), names_df["sample_name"].astype(str)))
+        
+        # Create idx_to_feature mapping from names file (1-based indexing)
+        idx_to_feature = dict((i+1, feat) for i, feat in enumerate(names_df["feature_barcode"].astype(str).tolist()))
+
+    # --- read allowed feature list (index -> feature_barcode) - fallback if names file not available
+    if idx_to_feature is None and p_allowed is not None:
+        allowed_df = _read_any(p_allowed)
+        allowed_df = allowed_df.iloc[:, :1]
+        allowed_df.columns = ["feature_barcode"]
+        # 1-based indexing in assignments → position in this list + 1
+        idx_to_feature = dict((i+1, feat) for i, feat in enumerate(allowed_df["feature_barcode"].astype(str).tolist()))
 
     # --- read assignments (cell_barcode, index_or_feature)
     assign_df = _read_any(p_assign)
@@ -181,7 +184,7 @@ def assign_flex_features(features_dir: str,
         assign_df["assigned"] = assign_df["assigned"].astype(int)
         if idx_to_feature is None:
             raise FileNotFoundError(
-                "Assignments use 1-based indices but allowed_features.(tsv|txt|csv) was not found to map them."
+                "Assignments use 1-based indices but neither features.names.(txt|tsv|csv) nor allowed_features.(tsv|txt|csv) was found to map them."
             )
         assign_df["feature_barcode"] = assign_df["assigned"].map(idx_to_feature)
     else:
@@ -200,16 +203,37 @@ def assign_flex_features(features_dir: str,
 
     # --- read special categories (all optional files)
     def _read_barcode_list(path):
-        if path is None: return set()
-        df = _read_any(path)
-        if df.shape[1] == 0:
-            return set()
-        return set(df.iloc[:, 0].astype(str).tolist())
+        """
+        Read a single-column text file (optionally *.gz*) and return the
+        first whitespace-separated token of each non-comment line as a `set`.
+        """
+        import gzip
 
-    amb_set = _read_barcode_list(p_amb)
-    dbl_set = _read_barcode_list(p_dbl)
-    miss_set = _read_barcode_list(p_missing)     # -> "missing"
-    low_set = _read_barcode_list(p_low)          # -> "low_support"
+        if path is None or not os.path.exists(path):
+            return set()
+
+        # Choose correct opener for plain vs gzip files
+        opener = gzip.open if path.endswith(".gz") else open
+
+        barcodes = set()
+        try:
+            with opener(path, "rt") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    # Keep the first token only (handles extra columns safely)
+                    barcodes.add(line.split()[0])
+        except Exception:
+            # Any read/parse problem → treat as empty
+            return set()
+
+        return barcodes
+
+    amb_set  = _read_barcode_list(p_amb)
+    dbl_set  = _read_barcode_list(p_dbl)
+    miss_set = _read_barcode_list(p_missing)   # -> "missing"
+    low_set  = _read_barcode_list(p_low)       # -> "low_support"
 
     # --- assemble final categorical series aligned to counts_adata.obs_names
     obs_index = counts_adata.obs_names.astype(str)
@@ -357,9 +381,10 @@ def read_mtx_to_h5ad(barcodes_file: str, features_file: str, mtx_file: str, outp
     
     return adata
 
-#print out all the env variables
-for key, value in os.environ.items():
-    print(f"{key}: {value}")
+# Uncomment the following lines only when you really need to debug environment variables
+# if os.getenv("DEBUG_ENV"):
+#     for key, value in os.environ.items():
+#         print(f"{key}: {value}")
 
 #find envs
 features_dir_str = os.getenv('features_dirs')
@@ -375,19 +400,22 @@ overwrite = True
 
 #for testing lets assign the above
 
-
-features_dir ='/storage/scRNAseq_output/features/SC2300771'
+sample_name = 'SC2300772'
+features_dir =f'/storage/scRNAseq_output/features/{sample_name}'
+alignments_dir = f'/storage/scRNAseq_output/Alignments/{sample_name}/star/'
 barcodes_file = os.path.join(features_dir, 'barcodes.tsv')
 features_file = os.path.join(features_dir, 'features.tsv')
 mtx_file = os.path.join(features_dir, 'matrix.mtx')
 output_h5ad = os.path.join(features_dir, 'features.h5ad')
-read_mtx_to_h5ad(barcodes_file, features_file, mtx_file, output_h5ad)
-exit()
-counts_adata = ad.read_h5ad(input_counts_h5ad)
-cellbender_counts_h5ad = os.path.join(alignments_sample_dir, method, cellbender_file)
-cellbender_counts_adata = ad.read_h5ad(cellbender_counts_h5ad)
-counts_adata = add_counts_layer_to_counts_adata(counts_adata, cellbender_counts_adata, cb_original_layer, cb_final_layer)
-counts_adata = assign_flex_features(features_dir, counts_adata)
-counts_adata.write(os.path.join(alignments_sample_dir, method, merged_counts_h5ad))
+#read_mtx_to_h5ad(barcodes_file, features_file, mtx_file, output_h5ad)
+counts_adata = ad.read_h5ad(f'{alignments_dir}/unfiltered_counts.h5ad')
+#add cellbender counts
+# cellbender_counts_h5ad = f'{alignments_dir}/cellbender/denoised_counts.h5ad'
+# cellbender_counts_adata = ad.read_h5ad(cellbender_counts_h5ad)
+# counts_adata = add_counts_layer_to_counts_adata(counts_adata, cellbender_counts_adata, 'denoised', 'denoised')
+counts_adata = assign_flex_features(alignments_dir, counts_adata)
+#mkdir if not exists
+os.makedirs(f'/storage/scRNAseq_output/Counts/{sample_name}', exist_ok=True)    
+counts_adata.write(f'/storage/scRNAseq_output/Counts/{sample_name}/merged_counts.h5ad')
 
 
