@@ -94,50 +94,51 @@ def add_counts_layer_to_counts_adata(counts_adata, new_adata, source_layer_name,
     return counts_adata
 
 
-def assign_flex_features(features_dir: str,
+def add_called_features(features_dir: str,
+                        called_features_dir: str,
                          counts_adata,
-                         obs_key: str = "sample_assignment"):
+                         obs_key: str = "sample_assignment"
+                         ):
     """
     Add a categorical obs column to `counts_adata` with sample assignments plus
     special categories: missing, low_support, ambiguous, doublets, filtered.
 
+    Expected files in `called_features_dir`:
+      - assignments.txt/tsv/csv      (2 cols: cell_barcode, feature_barcode)
+      - ambiguous.txt/tsv/csv            (1st col: cell_barcode)
+      - doublets.txt/tsv/csv             (1st col: cell_barcode)
+      - missing_cells.txt/tsv/csv        (1st col: cell_barcode)
+      - unassignable.txt/tsv/csv         (1st col: cell_barcode)  -> maps to 'low_support'
     Expected files in `features_dir`:
-      - features.assignments.tsv          (2 cols: cell_barcode, assigned_index [1-based])
-      - allowed_features.tsv              (1 col: feature_barcode in the same order used for indices)
-      - features.names.txt/tsv/csv        (2 cols: feature_barcode, sample_name)  # typo "nanes" handled
-      - features.ambiguous.tsv            (1st col: cell_barcode)
-      - features.doublets.tsv             (1st col: cell_barcode)
-      - features.missing_cells.txt        (1st col: cell_barcode)
-      - features.unassignable.txt         (1st col: cell_barcode)  -> maps to 'low_support'
-
+        - barcodes.txt/tsv/csv
+        - features.txt/tsv/csv
+        - matrix.mtx
     Behavior:
-      - Cells in assignments are labeled by their *sample_name* from features.names.*.
-        If a sample name is missing for a feature, falls back to the feature_barcode.
+      - Cells in assignments are labeled by their id from features_list_file
+      - If a sample name is missing for a feature, falls back to the feature_barcode.
       - Cells listed in the special files get those categories.
-      - Any cell in counts_adata.obs_names not matched above → 'filtered'.
+      - Any cell in counts_adata.obs_names not matched above → 'filtered'
 
     Returns:
-      counts_adata with counts_adata.obs[obs_key] as a pandas.Categorical.
+      counts_adata with one or more categorical obs columns: obs_key] as a pandas.Categorical.
     """
     def _read_any(path):
         return pd.read_csv(path, sep=None, engine="python", header=None, comment="#")
 
-    def _first_existing(*candidates):
-        for p in candidates:
-            q = os.path.join(features_dir, p)
+    def _first_existing(directory,file_possibilities):
+        for file in file_possibilities:
+            q = os.path.join(directory, file)
             if os.path.exists(q):
                 return q
         return None
 
     # --- locate files
-    p_assign   = _first_existing("features.assignments.tsv", "features.assignments.txt", "features.assignments.csv")
-    p_allowed  = _first_existing("allowed_features.tsv", "allowed_features.txt", "allowed_features.csv")
-    p_names    = _first_existing("features.names.txt", "features.names.tsv", "features.names.csv",
-                                 "features.nanes.txt", "features.nanes.tsv", "features.nanes.csv")  # typo tolerant
-    p_amb      = _first_existing("features.ambiguous.tsv", "features.ambiguous.txt", "features.ambiguous.csv")
-    p_dbl      = _first_existing("features.doublets.tsv", "features.doublets.txt", "features.doublets.csv")
-    p_missing  = _first_existing("features.missing_cells.txt", "features.missing_cells.tsv", "features.missing_cells.csv")
-    p_low      = _first_existing("features.unassignable.txt", "features.unassignable.tsv", "features.unassignable.csv")
+    p_assign   = _first_existing(called_features_dir,["assignments.txt","assignments.tsv","assignments.csv"])
+    p_names    = _first_existing(features_dir,["features.txt", "features.tsv", "features.csv"])
+    p_amb      = _first_existing(called_features_dir,["ambiguous.txt", "ambiguous.tsv", "ambiguous.csv"])
+    p_dbl      = _first_existing(called_features_dir,["doublets.txt", "doublets.tsv", "doublets.csv"])
+    p_missing  = _first_existing(called_features_dir,["missing_cells.txt", "missing_cells.tsv", "missing_cells.csv"])
+    p_low      = _first_existing(called_features_dir,["unassignable.txt", "unassignable.tsv", "unassignable.csv"])
 
     if p_assign is None:
         raise FileNotFoundError("Could not find features.assignments.(tsv|txt|csv) in features_dir")
@@ -147,22 +148,13 @@ def assign_flex_features(features_dir: str,
     idx_to_feature = None
     if p_names is not None:
         names_df = _read_any(p_names)
-        if names_df.shape[1] < 2:
-            raise ValueError(f"{os.path.basename(p_names)} must have at least 2 columns: feature_barcode, sample_name")
-        names_df = names_df.iloc[:, :2]
-        names_df.columns = ["feature_barcode", "sample_name"]
-        feature_to_sample = dict(zip(names_df["feature_barcode"].astype(str), names_df["sample_name"].astype(str)))
-        
-        # Create idx_to_feature mapping from names file (1-based indexing)
-        idx_to_feature = dict((i+1, feat) for i, feat in enumerate(names_df["feature_barcode"].astype(str).tolist()))
+        # Expect a single column text file with no header - just feature names/barcode
+        # Use first column as feature barcodes
+        feature_barcodes = names_df.iloc[:, 0].astype(str).tolist()
 
-    # --- read allowed feature list (index -> feature_barcode) - fallback if names file not available
-    if idx_to_feature is None and p_allowed is not None:
-        allowed_df = _read_any(p_allowed)
-        allowed_df = allowed_df.iloc[:, :1]
-        allowed_df.columns = ["feature_barcode"]
-        # 1-based indexing in assignments → position in this list + 1
-        idx_to_feature = dict((i+1, feat) for i, feat in enumerate(allowed_df["feature_barcode"].astype(str).tolist()))
+        # Create idx_to_feature mapping from names file (1-based indexing)
+        idx_to_feature = dict((i+1, feat) for i, feat in enumerate(feature_barcodes))
+
 
     # --- read assignments (cell_barcode, index_or_feature)
     assign_df = _read_any(p_assign)
@@ -191,12 +183,8 @@ def assign_flex_features(features_dir: str,
         # Already a feature barcode
         assign_df["feature_barcode"] = assign_df["assigned"].astype(str)
 
-    # Map feature_barcode → sample_name (fallback to feature_barcode if name missing)
-    if feature_to_sample:
-        assign_df["category"] = assign_df["feature_barcode"].map(feature_to_sample).fillna(assign_df["feature_barcode"])
-    else:
-        # No names file: use feature_barcode as category
-        assign_df["category"] = assign_df["feature_barcode"]
+
+    assign_df["category"] = assign_df["feature_barcode"]
 
     # Deduplicate in case of repeated barcodes in file (keep first occurrence)
     assign_df = assign_df.drop_duplicates(subset=["cell_barcode"], keep="first")
@@ -399,23 +387,35 @@ cb_final_layer= os.getenv('cb_final_layer')
 overwrite = True
 
 #for testing lets assign the above
+sample_names= ['30_KO_DE_XM','30_KO_ES','30_KO_PP1','30_KO_PP2','30_KO_S5_1','30_KO_S5_2','30_KO_S6_1','30_KO_S6_2']
 
-sample_name = 'SC2300772'
-features_dir =f'/storage/scRNAseq_output/features/{sample_name}'
-alignments_dir = f'/storage/scRNAseq_output/Alignments/{sample_name}/star/'
-barcodes_file = os.path.join(features_dir, 'barcodes.tsv')
-features_file = os.path.join(features_dir, 'features.tsv')
-mtx_file = os.path.join(features_dir, 'matrix.mtx')
-output_h5ad = os.path.join(features_dir, 'features.h5ad')
-read_mtx_to_h5ad(barcodes_file, features_file, mtx_file, output_h5ad)
-counts_adata = ad.read_h5ad(f'{alignments_dir}/unfiltered_counts.h5ad')
-#add cellbender counts
-# cellbender_counts_h5ad = f'{alignments_dir}/cellbender/denoised_counts.h5ad'
-# cellbender_counts_adata = ad.read_h5ad(cellbender_counts_h5ad)
-# counts_adata = add_counts_layer_to_counts_adata(counts_adata, cellbender_counts_adata, 'denoised', 'denoised')
-counts_adata = assign_flex_features(alignments_dir, counts_adata)
-#mkdir if not exists
-os.makedirs(f'/storage/scRNAseq_output/Counts/{sample_name}', exist_ok=True)    
-counts_adata.write(f'/storage/scRNAseq_output/Counts/{sample_name}/merged_counts.h5ad')
+for sample_name in sample_names:
+    alignments_dir = f'/mnt/pikachu/storage/MSK-output-2/Alignments/{sample_name}/star/'
+    counts_adata = ad.read_h5ad(f'{alignments_dir}/unfiltered_counts.h5ad')
+    #check if the denoised layer exists
+    if 'denoised' in counts_adata.layers:
+        print("Denoised layer found")
+    else:
+        print("No denoised layer found - will add cellbender counts")
+        cellbender_counts_h5ad = f'{alignments_dir}/cellbender/denoised_counts.h5ad'
+        cellbender_counts_adata = ad.read_h5ad(cellbender_counts_h5ad)
+        counts_adata = add_counts_layer_to_counts_adata(counts_adata, cellbender_counts_adata, 'denoised', 'denoised')
+    features_dirs= [f'/storage/gene_features/{sample_name}',f'/storage/larry_features/{sample_name}']
+
+    called_features_dirs= [f'/mnt/pikachu/storage/MSK-output-2/Alignments/{sample_name}/star/gene_features_em',f'/mnt/pikachu/storage/MSK-output-2/Alignments/{sample_name}/star/larry_features_em']
+    anndata_feature_names=['gene_barcode','larry_barcode']
+    for i,called_features_dir in enumerate(called_features_dirs):
+        print(f"outputing features from {features_dirs[i]}")
+        mtx_file = os.path.join(features_dirs[i], 'matrix.mtx')
+        barcodes_file = os.path.join(features_dirs[i], 'barcodes.txt')
+        features_file = os.path.join(features_dirs[i], 'features.txt')
+        output_h5ad = os.path.join(features_dirs[i], 'features.h5ad')
+        read_mtx_to_h5ad(barcodes_file, features_file, mtx_file, output_h5ad)
+        counts_adata = add_called_features(features_dirs[i],    called_features_dir, counts_adata,anndata_feature_names[i])
+
+    #mkdir if not exists
+    os.makedirs(f'/mnt/pikachu/storage/MSK-output-2/Features/{sample_name}', exist_ok=True)    
+    counts_adata.write(f'/mnt/pikachu/storage/MSK-output-2/Features/{sample_name}/features.h5ad')
+
 
 
