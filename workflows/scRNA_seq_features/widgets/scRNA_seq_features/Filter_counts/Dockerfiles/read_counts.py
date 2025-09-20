@@ -11,6 +11,8 @@ import multiprocessing
 from itertools import product
 
 def identify_experiment_type(dir):
+    if os.path.exists(os.path.join(dir) and os.path.isdir(os.path.basename(dir)) and os.path.isdir(os.path.join(dir, 'demux'))):
+        return "flex"
     # check if the dir/counts_unfiltered exists and is a directory
     if os.path.exists(os.path.join(dir, 'counts_unfiltered')):
         if os.path.isdir(os.path.join(dir, 'counts_unfiltered')):
@@ -27,8 +29,8 @@ def identify_experiment_type(dir):
     if os.path.exists(os.path.join(dir, 'outs')):
         if os.path.isdir(os.path.join(dir, 'outs')):
             return "cellranger"
-
-    
+    print(f"Error: Could not identify the experiment type for the directory {dir}. Skipping this directory.")
+    return None
 def read_cellranger(directory):
     print("Reading cellranger data")
     filtered_dir = os.path.join(directory, 'outs/filtered_feature_bc_matrix')
@@ -208,7 +210,15 @@ def process_directory(fulldir):
             print(f"Error: Could not identify the experiment type for the directory {fulldir}. Skipping this directory.")
             return
         print(f"Identified experiment type: {experiment_type}")
-        adata = readCounts(experiment_type, fulldir)
+        if (experiment_type == 'flex'):
+            gex_adata, demux_adata = read_flex(fulldir)
+            print(f"Writing flex gex data to {fullpath}")
+            gex_adata.write_h5ad(os.path.join(fulldir, 'gex.h5ad'))
+            print(f"Writing flex demux data to {fullpath}")
+            demux_adata.write_h5ad(os.path.join(fulldir, 'demux.h5ad'))
+            return
+        else:
+            adata = readCounts(experiment_type, fulldir)
 
         filter_features_flag = os.getenv('filter_features', 'false').lower() in ('true', '1', 't')
         if filter_features_flag:
@@ -217,6 +227,43 @@ def process_directory(fulldir):
 
         print(f"Writing counts to {fullpath}")
         adata.write_h5ad(fullpath)
+def read_gex_subdirectory(directory):
+    print("Reading flex gex data")
+    print(f"Reading flex gex data from {directory}")
+    adata = sc.read_mtx(os.path.join(directory, 'matrix.mtx'))
+    adata = adata.T
+    print(f"Reading genes from {os.path.join(directory, 'features.tsv')}")
+    genes = pd.read_csv(os.path.join(directory, 'features.tsv'), header=None, sep='\t', names=['gene_ids'])
+    barcodes = pd.read_csv(os.path.join(directory, 'barcodes.tsv'), header=None, sep='\t', names=['barcodes'])
+    adata.var_names = genes['gene_ids'].values
+    adata.obs_names = barcodes['barcodes'].values
+    return adata
+
+def read_demux_subdirectory(directory):
+    print("Reading flex demux data")
+    print(f"Reading flex demux data from {directory}")
+    adata = sc.read_mtx(os.path.join(directory, 'matrix.mtx'))
+    print(f"Reading sample_ids from {os.path.join(directory, 'features.tsv')}")
+    sample_ids = pd.read_csv(os.path.join(directory, 'features.tsv'), header=None, sep='\t', names=['sample_ids'])
+    print(f"Reading barcodes from {os.path.join(directory, 'barcodes.tsv')}")
+    barcodes = pd.read_csv(os.path.join(directory, 'barcodes.tsv'), header=None, sep='\t', names=['barcodes'])
+    
+    print(f"Matrix shape: {adata.shape}")
+    print(f"Number of sample_ids: {len(sample_ids)}")
+    print(f"Number of barcodes: {len(barcodes)}")
+    adata = adata.T
+    
+    adata.var_names = sample_ids['sample_ids'].values
+    adata.obs_names = barcodes['barcodes'].values
+    return adata
+def read_flex(directory):
+    demux_directory = os.path.join(directory, 'demux')
+    gex_directory = os.path.join(directory, 'gex')
+    print(f"Reading flex demux data from {demux_directory}")
+    demux_adata = read_demux_subdirectory(demux_directory)
+    print(f"Reading flex gex data from {gex_directory}")
+    gex_adata = read_gex_subdirectory(gex_directory)
+    return gex_adata, demux_adata
 
 def readCounts(type, directory):
     readers = {
